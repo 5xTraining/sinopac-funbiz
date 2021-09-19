@@ -1,6 +1,7 @@
 require "bundler/setup"
 require "sinopac/funbiz"
 require "sinopac/funbiz/hash"
+require "sinopac/funbiz/nonce"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
