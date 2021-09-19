@@ -1,5 +1,6 @@
 require "bundler/setup"
 require "sinopac/funbiz"
+require_relative "support/vcr"
 require "sinopac/funbiz/hash"
 require "sinopac/funbiz/nonce"
 
