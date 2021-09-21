@@ -4,6 +4,7 @@ require_relative "support/vcr"
 require "sinopac/funbiz/hash"
 require "sinopac/funbiz/nonce"
 require "sinopac/funbiz/sign"
+require "sinopac/funbiz/message"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
