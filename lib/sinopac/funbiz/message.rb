@@ -17,5 +17,15 @@ module Sinopac::FunBiz
       encrypted_message = cipher.update(content.to_json) + cipher.final
       encrypted_message.unpack('H*').first.upcase
     end
+
+    def self.decrypt(content:, key:, iv:)
+      cipher = OpenSSL::Cipher.new('AES-256-CBC')
+      cipher.decrypt
+      cipher.key = key
+      cipher.iv = iv
+
+      decrypted_message = cipher.update([content].pack('H*')) + cipher.final
+      JSON.parse(decrypted_message, { symbolize_names: true })
+    end
   end
 end
