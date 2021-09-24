@@ -40,4 +40,9 @@ RSpec.describe Sinopac::FunBiz::Gateway do
 
     expect(gateway.hash_id).to eq dummy_hash_id
   end
+
+  it "can create a gateway without arguments" do
+    gateway = Sinopac::FunBiz::Gateway.new
+    expect(gateway.shop_no).to eq ENV['FUNBIZ_SHOP_NO']
+  end
 end
