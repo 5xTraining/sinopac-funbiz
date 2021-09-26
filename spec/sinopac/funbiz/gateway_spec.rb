@@ -23,12 +23,7 @@ RSpec.describe Sinopac::FunBiz::Gateway do
 
   it "can calculate hash id" do
     dummy_shop_no = 'NA0001_001'
-    dummy_hashes = {
-      a1: "65960834240E44B7",
-      a2: "2831076A098E49E7",
-      b1: "CB1AFFBF915A492B",
-      b2: "7F242C0AA612454F"
-    }
+    dummy_hashes = build(:hashes)
     dummmy_end_point = 'https://sandbox.sinopac.com/QPay.WebAPI/api'
     dummy_hash_id = '4DA70F5E2D800D50B43ED3B537480C64'
 
@@ -44,5 +39,10 @@ RSpec.describe Sinopac::FunBiz::Gateway do
   it "can create a gateway without arguments" do
     gateway = Sinopac::FunBiz::Gateway.new
     expect(gateway.shop_no).to eq ENV['FUNBIZ_SHOP_NO']
+  end
+
+  it "can create a gateway with factory" do
+    gateway = build(:gateway, :ithome)
+    expect(gateway.hash_id).to eq '87282A2FA0E209EBE1B3713AB56A06C2'
   end
 end

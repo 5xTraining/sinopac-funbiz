@@ -1,6 +1,7 @@
 require 'dotenv/load'
 require "bundler/setup"
 require_relative "support/vcr"
+require_relative "support/factory_bot"
 require "sinopac/funbiz"
 require "sinopac/funbiz/all"
 
