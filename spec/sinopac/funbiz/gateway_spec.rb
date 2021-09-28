@@ -45,4 +45,30 @@ RSpec.describe Sinopac::FunBiz::Gateway do
     gateway = build(:gateway, :ithome)
     expect(gateway.hash_id).to eq '87282A2FA0E209EBE1B3713AB56A06C2'
   end
+
+  it "can build a order params for credit card transaction" do
+    order = build(:order, amount: 500, memo: "五百倍券專用")
+    gateway = build(:gateway, :ithome)
+    order_params = gateway.build_creditcard_order(
+      order: order,
+      auto_billing: true
+    )
+
+    expect(order_params[:PayType]).to eq 'C'
+    expect(order_params[:Memo]).to eq '五百倍券專用'
+    expect(order_params[:CardParam][:AutoBilling]).to eq 'Y'
+  end
+
+  it "can build a order params for atm transaction" do
+    order = build(:order, amount: 100, param1: "肥肥專用")
+    gateway = build(:gateway, :ithome)
+    order_params = gateway.build_atm_order(
+      order: order,
+      expired_after: 10
+    )
+
+    expect(order_params[:PayType]).to eq 'A'
+    expect(order_params[:Param1]).to eq '肥肥專用'
+    expect(order_params[:ATMParam][:ExpireDate]).to eq '20211008'
+  end
 end

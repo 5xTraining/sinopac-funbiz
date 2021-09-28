@@ -6,8 +6,6 @@ RSpec.describe Sinopac::FunBiz::Nonce do
         end_point: 'https://sandbox.sinopac.com/QPay.WebAPI/api'
       )
 
-      p nonce
-
       expect(nonce).not_to be nil
       expect(nonce.length).to be 108
     end
