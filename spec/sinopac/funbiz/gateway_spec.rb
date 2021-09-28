@@ -7,12 +7,12 @@ RSpec.describe Sinopac::FunBiz::Gateway do
       b1: "BC74301945134CB4",
       b2: "961F67F8FCA44AB9"
     }
-    dummmy_end_point = 'https://sandbox.sinopac.com/QPay.WebAPI/api'
+    dummy_end_point = 'https://sandbox.sinopac.com/QPay.WebAPI/api'
 
     gateway = Sinopac::FunBiz::Gateway.new(
       shop_no: dummy_shop_no,
       hashes: dummy_hashes,
-      end_point: dummmy_end_point
+      end_point: dummy_end_point
     )
 
     result = gateway.get_nonce
@@ -24,13 +24,13 @@ RSpec.describe Sinopac::FunBiz::Gateway do
   it "can calculate hash id" do
     dummy_shop_no = 'NA0001_001'
     dummy_hashes = build(:hashes)
-    dummmy_end_point = 'https://sandbox.sinopac.com/QPay.WebAPI/api'
+    dummy_end_point = 'https://sandbox.sinopac.com/QPay.WebAPI/api'
     dummy_hash_id = '4DA70F5E2D800D50B43ED3B537480C64'
 
     gateway = Sinopac::FunBiz::Gateway.new(
       shop_no: dummy_shop_no,
       hashes: dummy_hashes,
-      end_point: dummmy_end_point
+      end_point: dummy_end_point
     )
 
     expect(gateway.hash_id).to eq dummy_hash_id
