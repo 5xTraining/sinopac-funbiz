@@ -1,3 +1,5 @@
+require 'timecop'
+
 RSpec.describe Sinopac::FunBiz::Gateway do
   it "can get nonce" do
     dummy_shop_no = 'NA0001_001'
@@ -60,6 +62,9 @@ RSpec.describe Sinopac::FunBiz::Gateway do
   end
 
   it "can build a order params for atm transaction" do
+    today = Time.local(1993, 10, 31, 10, 0, 0)
+    Timecop.freeze(today)
+
     order = build(:order, amount: 100, param1: "肥肥專用")
     gateway = build(:gateway, :ithome)
     order_params = gateway.build_atm_order(
@@ -69,6 +74,6 @@ RSpec.describe Sinopac::FunBiz::Gateway do
 
     expect(order_params[:PayType]).to eq 'A'
     expect(order_params[:Param1]).to eq '肥肥專用'
-    expect(order_params[:ATMParam][:ExpireDate]).to eq '20211008'
+    expect(order_params[:ATMParam][:ExpireDate]).to eq '19931110'
   end
 end
