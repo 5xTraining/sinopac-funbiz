@@ -76,4 +76,17 @@ RSpec.describe Sinopac::FunBiz::Gateway do
     expect(order_params[:Param1]).to eq '肥肥專用'
     expect(order_params[:ATMParam][:ExpireDate]).to eq '19931110'
   end
+
+  it "can generate a request params" do
+    gateway = build(:gateway)
+    order = build(:order, amount: 1450, param1: "肥肥專用")
+    order_params = gateway.build_creditcard_order(
+      order: order,
+      auto_billing: true
+    )
+
+    request_params = gateway.order_create_request_params(order_params: order_params)
+
+    expect(request_params[:APIService]).to eq "OrderCreate"
+  end
 end

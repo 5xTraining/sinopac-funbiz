@@ -18,7 +18,7 @@ module Sinopac::FunBiz
     end
 
     def get_nonce
-      Nonce.get_nonce(shop_no: @shop_no, end_point: @end_point)
+      @nonce ||= Nonce.get_nonce(shop_no: @shop_no, end_point: @end_point)
     end
 
     def hash_id
@@ -33,7 +33,33 @@ module Sinopac::FunBiz
       build_order(order: order, currency: currency, type: :credit_card, **params)
     end
 
+    def order_create_request_params(order_params:)
+      {
+        Version: "1.0.0",
+        ShopNo: @shop_no,
+        APIService: "OrderCreate",
+        Sign: sign(content: order_params),
+        Nonce: get_nonce,
+        Message: encrypt_message(content: order_params)
+      }
+    end
+
     private
+    def encrypt_message(content:)
+      Message.encrypt(
+        content: content,
+        key: hash_id,
+        iv: Message.iv(nonce: get_nonce)
+      )
+    end
+
+    def sign(content:)
+      Sign.sign(
+        content: content,
+        nonce: get_nonce,
+        hash_id: hash_id
+      )
+    end
     def build_order(order:, type:, currency: 'TWD', **params)
       content = {
         ShopNo: @shop_no,
