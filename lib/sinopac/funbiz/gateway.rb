@@ -63,6 +63,8 @@ module Sinopac::FunBiz
       header = { "Content-Type" => "application/json" }
       resp = Net::HTTP.post(url, request_params.to_json, header)
       result = decrypt_message(content: JSON.parse(resp.body))
+
+      Result.new(result)
     end
 
     private

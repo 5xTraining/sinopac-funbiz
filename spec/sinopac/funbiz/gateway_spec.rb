@@ -91,9 +91,16 @@ RSpec.describe Sinopac::FunBiz::Gateway do
   end
 
   it "can receive api response" do
-    gateway = build(:gateway, :ithome)
-    order = build(:order, amount: 1500, param1: "BuiBui 飼料錢")
+    VCR.use_cassette(:gateway_api) do
+      gateway = build(:gateway, :ithome)
+      order = build(:order, amount: 1500, param1: "BuiBui 飼料錢")
 
-    result = gateway.pay!(pay_type: :credit_card, order: order)
+      result = gateway.pay!(pay_type: :credit_card, order: order)
+
+      expect(result).to be_success
+      expect(result.amount).to be 1500
+      expect(result.param1).to eq "BuiBui 飼料錢"
+      expect(result.payment_url).not_to be_empty
+    end
   end
 end
