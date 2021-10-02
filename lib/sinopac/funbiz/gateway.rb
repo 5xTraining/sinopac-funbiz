@@ -1,4 +1,7 @@
 require 'sinopac/funbiz/all'
+require 'net/http'
+require 'uri'
+require 'json'
 
 module Sinopac::FunBiz
   class Gateway
@@ -25,12 +28,12 @@ module Sinopac::FunBiz
       Hash.hash_id(@hashes)
     end
 
-    def build_atm_order(order:, currency: 'TWD', **params)
-      build_order(order: order, currency: currency, type: :atm, **params)
+    def build_atm_order(order:, **options)
+      build_order(order: order, type: :atm, **options)
     end
 
-    def build_creditcard_order(order:, currency: 'TWD', **params)
-      build_order(order: order, currency: currency, type: :credit_card, **params)
+    def build_creditcard_order(order:, **options)
+      build_order(order: order, type: :credit_card, **options)
     end
 
     def order_create_request_params(order_params:)
@@ -44,12 +47,41 @@ module Sinopac::FunBiz
       }
     end
 
+    def pay!(pay_type:, order:, **options)
+      order_params = case pay_type
+      when :credit_card
+        build_creditcard_order(order: order, **options)
+      when :atm
+        build_atm_order(order: order, **options)
+      else
+        raise "payment method is not supported yet!"
+      end
+
+      request_params = order_create_request_params(order_params: order_params)
+
+      url = URI("#{@end_point}/Order")
+      header = { "Content-Type" => "application/json" }
+      resp = Net::HTTP.post(url, request_params.to_json, header)
+      result = decrypt_message(content: JSON.parse(resp.body))
+    end
+
     private
     def encrypt_message(content:)
       Message.encrypt(
         content: content,
         key: hash_id,
         iv: Message.iv(nonce: get_nonce)
+      )
+    end
+
+    def decrypt_message(content:)
+      message = content["Message"]
+      nonce = content["Nonce"]
+
+      Message.decrypt(
+        content: message,
+        key: hash_id,
+        iv: Message.iv(nonce: nonce)
       )
     end
 
@@ -60,12 +92,13 @@ module Sinopac::FunBiz
         hash_id: hash_id
       )
     end
-    def build_order(order:, type:, currency: 'TWD', **params)
+
+    def build_order(order:, type:, **params)
       content = {
         ShopNo: @shop_no,
         OrderNo: order.order_no,
-        Amount: order.amount,
-        CurrencyID: currency,
+        Amount: order.amount * 100,
+        CurrencyID: params[:currency] || 'TWD',
         PrdtName: order.product_name,
         Memo: order.memo,
         Param1: order.param1,
@@ -93,7 +126,7 @@ module Sinopac::FunBiz
             PayType: 'C',
             CardParam: {
               AutoBilling: params[:auto_billing] ? 'Y' : 'N',
-              ExpBillingDays: params[:auto_billing] ? '' : params[:expired_billing_days] || 10,
+              ExpBillingDays: params[:auto_billing] ? '' : params[:expired_billing_days] || 7,
               ExpMinutes: params[:expired_minutes] || 10,
               PayTypeSub: 'ONE'
             }

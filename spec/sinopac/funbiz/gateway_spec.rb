@@ -63,18 +63,18 @@ RSpec.describe Sinopac::FunBiz::Gateway do
 
   it "can build a order params for atm transaction" do
     today = Time.local(1993, 10, 31, 10, 0, 0)
-    Timecop.freeze(today)
+    Timecop.freeze(today) do
+      order = build(:order, amount: 100, param1: "肥肥專用")
+      gateway = build(:gateway, :ithome)
+      order_params = gateway.build_atm_order(
+        order: order,
+        expired_after: 10
+      )
 
-    order = build(:order, amount: 100, param1: "肥肥專用")
-    gateway = build(:gateway, :ithome)
-    order_params = gateway.build_atm_order(
-      order: order,
-      expired_after: 10
-    )
-
-    expect(order_params[:PayType]).to eq 'A'
-    expect(order_params[:Param1]).to eq '肥肥專用'
-    expect(order_params[:ATMParam][:ExpireDate]).to eq '19931110'
+      expect(order_params[:PayType]).to eq 'A'
+      expect(order_params[:Param1]).to eq '肥肥專用'
+      expect(order_params[:ATMParam][:ExpireDate]).to eq '19931110'
+    end
   end
 
   it "can generate a request params" do
@@ -88,5 +88,12 @@ RSpec.describe Sinopac::FunBiz::Gateway do
     request_params = gateway.order_create_request_params(order_params: order_params)
 
     expect(request_params[:APIService]).to eq "OrderCreate"
+  end
+
+  it "can receive api response" do
+    gateway = build(:gateway, :ithome)
+    order = build(:order, amount: 1500, param1: "BuiBui 飼料錢")
+
+    result = gateway.pay!(pay_type: :credit_card, order: order)
   end
 end
