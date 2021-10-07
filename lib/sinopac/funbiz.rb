@@ -1,4 +1,4 @@
-require "sinopac/funbiz/version"
+require "sinopac/funbiz/all"
 
 module Sinopac
   module FunBiz
