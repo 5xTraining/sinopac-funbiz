@@ -7,6 +7,7 @@
   "sinopac/funbiz/gateway",
   "sinopac/funbiz/order",
   "sinopac/funbiz/result",
+  "sinopac/funbiz/transaction_result",
 ].each do |mod|
   begin
     require mod
