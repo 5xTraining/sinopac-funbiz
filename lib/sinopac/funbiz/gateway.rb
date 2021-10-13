@@ -44,6 +44,10 @@ module Sinopac::FunBiz
       build_request_params(order_params: data, service_type: 'OrderPayQuery')
     end
 
+    def order_query_request_params(data:)
+      build_request_params(order_params: data, service_type: 'OrderQuery')
+    end
+
     def pay!(pay_type:, order:, **options)
       order_params = case pay_type
       when :credit_card
@@ -62,6 +66,22 @@ module Sinopac::FunBiz
       result = decrypt_message(content: JSON.parse(resp.body))
 
       Result.new(result)
+    end
+
+    def query_order(shop_no: nil, order_no:)
+      data = {
+        ShopNo: shop_no || @shop_no,
+        OrderNo: order_no
+      }
+
+      request_params = order_query_request_params(data: data)
+
+      url = URI("#{@end_point}/Order")
+      header = { "Content-Type" => "application/json" }
+      resp = Net::HTTP.post(url, request_params.to_json, header)
+      result = decrypt_message(content: JSON.parse(resp.body))
+
+      OrderResult.new(result)
     end
 
     def query_pay_order(shop_no: nil, pay_token:)
