@@ -6,8 +6,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["eddie"]
   spec.email         = ["eddie@5xcampus.com"]
 
-  spec.summary       = %q{API Wrapper for SinoPac FunBiz Payment(WIP)}
-  spec.description   = %q{API Wrapper for SinoPac FunBiz Payment(WIP)}
+  spec.summary       = %q{API Wrapper for SinoPac FunBiz Payment}
+  spec.description   = %q{API Wrapper for SinoPac FunBiz Payment}
   spec.homepage      = "https://kaochenlong.com"
   spec.license       = "MIT"
   spec.required_ruby_version = Gem::Requirement.new(">= 2.3.0")
